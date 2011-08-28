@@ -37,11 +37,18 @@ describe Secure do
     $SAFE.should == 0
   end
 
-  #it "should not allow infinite loops" do
-    #lambda do
-      #Secure.ly do
-        #while true; end
-      #end
-    #end
-  #end
+  it "should kill infinite loops" do
+    response = Secure.ly :timeout => 0.005 do
+      while true; end
+    end
+    response.should_not be_success
+    response.error.should be_a(Secure::TimeoutError)
+  end
+
+  it "should kill all threads after running" do
+    Secure.ly do
+      10
+    end
+    Thread.list.should have(1).things
+  end
 end

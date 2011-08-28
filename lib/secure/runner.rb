@@ -1,12 +1,26 @@
 module Secure
   class Runner
-    def self.run
-      Thread.start do
+    def initialize(opts)
+      @timeout = opts[:timeout] || 1
+    end
+
+    def guard_threads
+      @guard_threads || []
+    end
+
+    def run
+      thread = Thread.start do
         $SAFE=3
         Response.success(yield)
-      end.value
-    rescue SecurityError => e
+      end
+
+      guard_threads << GuardThread.kill_thread_on_timeout(@timeout, thread)
+
+      thread.value
+    rescue StandardError => e
       Response.error(e)
+    ensure
+      #guard_threads.each(&:exit!)
     end
   end
 end
