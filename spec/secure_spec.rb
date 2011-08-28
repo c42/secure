@@ -23,6 +23,14 @@ describe Secure do
     #response.error.should be_a?(SecurityError)
   end
 
+  it "should have safe value set" do
+    response = Secure.ly do
+      $SAFE
+    end
+    response.should be_success
+    response.value.should == 3
+  end
+
   #it "should not allow infinite loops" do
     #lambda do
       #Secure.ly do

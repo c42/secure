@@ -1,14 +1,12 @@
 require "secure/version"
 require "secure/response"
+require "secure/runner"
 
 module Secure
   class << self
     def run
-      $SAFE = 3
-      begin
-        Response.success(yield)
-      rescue SecurityError => e
-        Response.error(e)
+      Runner.run do
+        yield
       end
     end
 
