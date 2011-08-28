@@ -74,13 +74,13 @@ describe Secure do
   end
 
   context "allowed syntax" do
-    #it "should allow eval on an untainted string" do
-      #sting = "45".untaint
-      #response = Secure.ly do
-        #eval(string)
-      #end
-      #response.should be_success
-      #response.value.should == 45
-    #end
+    it "should allow eval on an untainted string" do
+      string = "45".untaint
+      response = Secure.ly({}, string) do |str|
+        eval(str)
+      end
+      response.should be_success
+      response.value.should == 45
+    end
   end
 end
