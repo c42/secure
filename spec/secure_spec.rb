@@ -82,5 +82,13 @@ describe Secure do
       response.should be_success
       response.value.should == 45
     end
+
+    it "should be able to read from an open file" do
+      file = File.open("/etc/hosts")
+      response = Secure.ly({}, file) do |file|
+        file.readline
+      end
+      response.should be_success
+    end
   end
 end
