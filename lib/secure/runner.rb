@@ -1,8 +1,10 @@
 module Secure
   class Runner
     def self.run
-      $SAFE=3
-      Response.success(yield)
+      Thread.start do
+        $SAFE=3
+        Response.success(yield)
+      end.value
     rescue SecurityError => e
       Response.error(e)
     end

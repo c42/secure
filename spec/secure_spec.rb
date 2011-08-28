@@ -31,6 +31,12 @@ describe Secure do
     response.value.should == 3
   end
 
+  it "should not have affected the global safe value" do
+    response = Secure.ly {}
+    response.should be_success
+    $SAFE.should == 0
+  end
+
   #it "should not allow infinite loops" do
     #lambda do
       #Secure.ly do
