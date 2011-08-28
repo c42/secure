@@ -6,9 +6,9 @@ module Secure
     def run
       $SAFE = 3
       begin
-        yield
+        Response.success(yield)
       rescue SecurityError => e
-        e
+        Response.error(e)
       end
     end
 
