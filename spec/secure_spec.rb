@@ -12,7 +12,7 @@ describe Secure do
       eval "45"
     end
     response.should_not be_success
-    #response.error.should be_a?(SecurityError)
+    response.error.should be_a(SecurityError)
   end
 
   it "should not allow system calls" do
@@ -20,7 +20,7 @@ describe Secure do
       system("echo hi")
     end
     response.should_not be_success
-    #response.error.should be_a?(SecurityError)
+    response.error.should be_a(SecurityError)
   end
 
   it "should have safe value set" do
