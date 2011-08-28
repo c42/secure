@@ -17,7 +17,7 @@ module Secure
       guard_threads << GuardThread.kill_thread_on_timeout(@timeout, thread)
 
       thread.value
-    rescue StandardError => e
+    rescue SecurityError, TimeoutError => e
       Response.error(e)
     ensure
       #guard_threads.each(&:exit!)

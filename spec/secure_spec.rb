@@ -15,6 +15,14 @@ describe Secure do
     Thread.list.should have(1).things
   end
 
+  it "should take parameters" do
+    response = Secure.ly({}, 4, 2) do |a, b|
+      a + b
+    end
+    response.should be_success
+    response.value.should == 6
+  end
+
   context "safe value" do
     it "should be set to 3" do
       response = Secure.ly do
@@ -63,5 +71,16 @@ describe Secure do
       response.should_not be_success
       response.error.should be_a(SecurityError)
     end
+  end
+
+  context "allowed syntax" do
+    #it "should allow eval on an untainted string" do
+      #sting = "45".untaint
+      #response = Secure.ly do
+        #eval(string)
+      #end
+      #response.should be_success
+      #response.value.should == 45
+    #end
   end
 end
