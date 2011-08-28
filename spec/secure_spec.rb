@@ -46,9 +46,18 @@ describe Secure do
   end
 
   it "should kill all threads after running" do
-    Secure.ly do
+    response = Secure.ly do
       10
     end
+    response.should be_success
     Thread.list.should have(1).things
+  end
+
+  it "should not be able to open a file" do
+    response = Secure.ly do
+      File.open("/etc/passwd")
+    end
+    response.should_not be_success
+    response.error.should be_a(SecurityError)
   end
 end
