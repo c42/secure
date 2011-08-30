@@ -91,4 +91,15 @@ describe Secure do
       response.should be_success
     end
   end
+
+  context "error information" do
+    it "should know where the syntax is invalid" do
+      string = "while true; end; end"
+      response = Secure.ly({}, string) do |string|
+        eval(string)
+      end
+      response.should_not be_success
+      response.error.should be_a(SyntaxError)
+    end
+  end
 end
