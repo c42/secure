@@ -11,7 +11,7 @@ module Secure
         begin
           ChildProcess.new(@opts, read_file, write_file).execute { yield }
         ensure
-          exit!
+          exit
         end
       end
 
