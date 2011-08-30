@@ -1,26 +1,25 @@
 module Secure
   class Runner
     def initialize(opts)
-      @timeout = opts[:timeout] || 1
-    end
-
-    def guard_threads
-      @guard_threads || []
+      @opts = opts
     end
 
     def run
-      thread = Thread.start do
-        $SAFE=3
-        Response.success(yield)
+      read_file, write_file = IO.pipe
+
+      child = fork do
+        begin
+          ChildProcess.new(@opts, read_file, write_file).execute { yield }
+        ensure
+          exit!
+        end
       end
 
-      guard_threads << GuardThread.kill_thread_on_timeout(@timeout, thread)
-
-      thread.value
-    rescue SecurityError, TimeoutError => e
-      Response.error(e)
+      Process.wait(child)
+      ParentProcess.new(read_file, write_file).execute
     ensure
-      #guard_threads.each(&:exit!)
+      read_file.close unless read_file.closed?
+      write_file.close unless write_file.closed?
     end
   end
 end

@@ -2,6 +2,8 @@ require "secure/version"
 require "secure/response"
 require "secure/errors"
 require "secure/guard_thread"
+require "secure/parent_process"
+require "secure/child_process"
 require "secure/runner"
 
 module Secure
