@@ -9,8 +9,8 @@ require "secure/runner"
 module Secure
   class << self
     def run(opts = {}, *args)
-      Runner.new(opts).run do
-        yield *args
+      Runner.new(opts, *args).run do |*a|
+        yield *a
       end
     end
 

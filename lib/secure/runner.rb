@@ -1,7 +1,8 @@
 module Secure
   class Runner
-    def initialize(opts)
+    def initialize(opts = {}, *args)
       @opts = opts
+      @args = args
     end
 
     def run
@@ -9,7 +10,7 @@ module Secure
 
       child = fork do
         begin
-          ChildProcess.new(@opts, read_file, write_file).execute { yield }
+          ChildProcess.new(@opts, read_file, write_file).execute { yield *@args }
         ensure
           exit
         end
