@@ -9,9 +9,12 @@ require "secure/runner"
 module Secure
   class << self
     def run(opts = {}, *args)
-      Runner.new(opts, *args).run do |*a|
+      response = Runner.new(opts, *args).run do |*a|
         yield *a
       end
+
+      raise response.error unless response.success?
+      response.value
     end
 
     alias :ly :run
