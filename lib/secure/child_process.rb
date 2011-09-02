@@ -1,3 +1,5 @@
+require 'base64'
+
 module Secure
   class ChildProcess
     def initialize(opts, read_file, write_file)
@@ -27,7 +29,7 @@ module Secure
 
     def execute
       ret = safely_run_block { yield }
-      @pipe.write(Marshal.dump(ret))
+      @pipe.write(Base64.encode64(Marshal.dump(ret)))
     end
   end
 end
