@@ -1,12 +1,11 @@
 require 'bundler/gem_tasks'
 require 'rake'
-require 'spec/rake/spectask'
+require 'rspec/core/rake_task'
 
 desc "Run all examples"
-Spec::Rake::SpecTask.new('spec') do |t|
-  t.spec_opts << "--colour --format specdoc --loadby mtime --reverse"
-  t.spec_opts << "-r spec/spec_helper"
-  t.spec_files = FileList['spec/**/*.rb']
+RSpec::Core::RakeTask.new('spec') do |t|
+  t.rspec_opts = "--colour --format documentation -r spec/spec_helper"
+  t.pattern = 'spec/**/*.rb'
 end
 
 task :default => :spec
