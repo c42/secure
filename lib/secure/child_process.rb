@@ -6,6 +6,8 @@ module Secure
       read_file.close
       @pipe = write_file
       @timeout = opts[:timeout]
+      @limit_memory = opts[:limit_memory]
+      @limit_cpu = opts[:limit_cpu]
     end
 
     def guard_threads
@@ -13,6 +15,8 @@ module Secure
     end
 
     def safely_run_block
+      Process::setrlimit(Process::RLIMIT_AS, @limit_memory) if @limit_memory
+      Process::setrlimit(Process::RLIMIT_CPU, @limit_cpu, 2 + @limit_cpu) if @limit_cpu
       thread = Thread.start do
         $SAFE=3
         yield

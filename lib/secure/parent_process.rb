@@ -9,6 +9,8 @@ module Secure
 
     def execute
       Marshal.load(Base64.decode64(@pipe.read))
+    rescue
+      Response.error(ChildKilledError.new("Child has been killed without returning"))
     end
   end
 end

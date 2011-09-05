@@ -65,6 +65,26 @@ module Secure
         response.error.should be_a(Secure::TimeoutError)
       end
 
+      if RUBY_PLATFORM =~ /darwin/
+        pending "should kill a process with too much memory (does not work on OSX)"
+      else
+        it "should kill a process with too much memory on linux" do
+          response = Runner.new(:limit_memory => 10 * 1024).run do
+            'a' * 10 * 1024
+          end
+          response.should_not be_success
+          response.error.should be_a(NoMemoryError)
+        end
+      end
+
+      it "kills a process using too much cpu" do
+        response = Runner.new(:limit_cpu => 1).run do
+          while true; end
+        end
+        response.should_not be_success
+        response.error.should be_a(Secure::ChildKilledError)
+      end
+
       it "should not be able to open a file" do
         response = Runner.new.run do
           File.open("/etc/passwd")
