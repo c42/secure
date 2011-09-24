@@ -123,5 +123,42 @@ module Secure
         response.error.should be_a(SyntaxError)
       end
     end
+
+    context "redirections" do
+      let(:pipe) { IO.pipe }
+      let(:read_file) { pipe[0] }
+      let(:write_file) { pipe[1] }
+
+      after(:each) do
+        write_file.close unless write_file.closed?
+        read_file.close unless read_file.closed?
+      end
+
+      it "redirects standard output" do
+        response = Runner.new(:pipe_stdout => write_file).run do
+          p "foobar"
+        end
+        write_file.close
+        read_file.read.should == "\"foobar\"\n"
+      end
+
+      it "redirects standard output" do
+        response = Runner.new(:pipe_stderr => write_file).run do
+          $stderr.puts "\"foobar\""
+        end
+        write_file.close
+        read_file.read.should == "\"foobar\"\n"
+      end
+
+      # This is pending because of some rspec wierdness that readline reads the first line of spec fil
+      pending "redirects standard input" do
+        write_file.puts "foobar"
+        write_file.close
+        response = Runner.new(:pipe_stdin => read_file).run do
+          readline
+        end
+        response.value.should == "foobar\n"
+      end
+    end
   end
 end

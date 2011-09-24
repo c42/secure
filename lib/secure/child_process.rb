@@ -8,6 +8,9 @@ module Secure
       @timeout = opts[:timeout]
       @limit_memory = opts[:limit_memory]
       @limit_cpu = opts[:limit_cpu]
+      @pipe_stdout = opts[:pipe_stdout]
+      @pipe_stderr = opts[:pipe_stderr]
+      @pipe_stdin = opts[:pipe_stdin]
     end
 
     def guard_threads
@@ -17,6 +20,9 @@ module Secure
     def safely_run_block
       Process::setrlimit(Process::RLIMIT_AS, @limit_memory) if @limit_memory
       Process::setrlimit(Process::RLIMIT_CPU, @limit_cpu, 2 + @limit_cpu) if @limit_cpu
+      $stdout.reopen(@pipe_stdout) if @pipe_stdout
+      $stderr.reopen(@pipe_stderr) if @pipe_stderr
+      $stdin.reopen(@pipe_stdin) if @pipe_stdin
       thread = Thread.start do
         $SAFE=3
         yield
