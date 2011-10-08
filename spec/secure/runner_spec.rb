@@ -33,6 +33,16 @@ module Secure
       response.value.should == 0
     end
 
+    it "accepts multiple blocks that are run before safeing" do
+      before_1 = lambda { $FOO = 1 }
+      before_2 = lambda { $BAR = 2 }
+      response = Runner.new(:run_before => [before_1, before_2] ).run do
+        $FOO + $BAR
+      end
+      response.should be_success
+      response.value.should == 3
+    end
+
     context "safe value" do
       it "should be set to 3" do
         response = Runner.new.run do

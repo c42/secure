@@ -29,11 +29,20 @@ module Secure
       $stdin.reopen(@pipe_stdin) if @pipe_stdin
     end
 
+    def run_before_methods
+      return unless @run_before
+      if @run_before.is_a? Array
+        @run_before.each &:call
+      else
+        @run_before.call
+      end
+    end
+
     def safely_run_block
       set_resource_limits
       redirect_files
       thread = Thread.start do
-        @run_before.call if @run_before
+        run_before_methods
         $SAFE=3
         yield
       end
