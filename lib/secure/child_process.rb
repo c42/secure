@@ -11,19 +11,29 @@ module Secure
       @pipe_stdout = opts[:pipe_stdout]
       @pipe_stderr = opts[:pipe_stderr]
       @pipe_stdin = opts[:pipe_stdin]
+      @run_before = opts[:run_before]
     end
 
     def guard_threads
       @guard_threads || []
     end
 
-    def safely_run_block
+    def set_resource_limits
       Process::setrlimit(Process::RLIMIT_AS, @limit_memory) if @limit_memory
       Process::setrlimit(Process::RLIMIT_CPU, @limit_cpu, 2 + @limit_cpu) if @limit_cpu
+    end
+
+    def redirect_files
       $stdout.reopen(@pipe_stdout) if @pipe_stdout
       $stderr.reopen(@pipe_stderr) if @pipe_stderr
       $stdin.reopen(@pipe_stdin) if @pipe_stdin
+    end
+
+    def safely_run_block
+      set_resource_limits
+      redirect_files
       thread = Thread.start do
+        @run_before.call if @run_before
         $SAFE=3
         yield
       end

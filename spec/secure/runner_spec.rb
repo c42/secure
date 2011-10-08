@@ -24,6 +24,15 @@ module Secure
       response.value.should == 6
     end
 
+    it "should accept a block that is run before safeing" do
+      run_before = lambda { $FOO = $SAFE }
+      response = Runner.new(:run_before => run_before ).run do
+        $FOO
+      end
+      response.should be_success
+      response.value.should == 0
+    end
+
     context "safe value" do
       it "should be set to 3" do
         response = Runner.new.run do
