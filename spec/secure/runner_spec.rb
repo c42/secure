@@ -96,6 +96,7 @@ module Secure
         pending "should kill a process with too much memory (does not work on OSX)"
         pending "kills a process trying to fork (does not work on OSX)"
       else
+
         it "should kill a process with too much memory on linux" do
           response = Runner.new(:limit_memory => 10 * 1024).run do
             'a' * 10 * 1024
@@ -112,7 +113,7 @@ module Secure
             10
           end
           response.should_not be_success
-          response.error.should be_a(Errno::EMFILE)
+          response.error.should be_a(ThreadError)
         end
       end
 
