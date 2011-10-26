@@ -37,6 +37,7 @@ Options:
 * :limit_cpu => This is the limit of how many cpu-seconds your process can use. MUST be an integer. This should be used as a fallback in case :timeout is not honored
 * :run_before => A block, or array of blocks that is run before your code is sandboxed. Be careful. Remember how lambdas are bound in ruby. Refer to this for more details: http://blog.sidu.in/2007/11/ruby-blocks-gotchas.html
 * :pipe_stdin, :pipe_stdout, :pipe_stderr => A File to pipe the stdin, out ond stderr to
+* :safe => An integer that represents the new safe mode
 
 Errors:
 =======

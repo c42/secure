@@ -57,6 +57,14 @@ module Secure
         response.should be_success
         $SAFE.should == 0
       end
+
+      it "can change the safe value if needed" do
+        response = Runner.new(:safe => 0).run do
+          $SAFE
+        end
+        response.should be_success
+        response.value.should == 0
+      end
     end
 
     context "security violations" do

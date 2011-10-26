@@ -12,6 +12,7 @@ module Secure
       @pipe_stderr = opts[:pipe_stderr]
       @pipe_stdin = opts[:pipe_stdin]
       @run_before = opts[:run_before]
+      @safe_value = opts[:safe] || 3
     end
 
     def guard_threads
@@ -43,7 +44,7 @@ module Secure
       redirect_files
       thread = Thread.start do
         run_before_methods
-        $SAFE=3
+        $SAFE = @safe_value
         yield
       end
       decorate_with_guard_threads(thread)
