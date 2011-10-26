@@ -13,6 +13,7 @@ module Secure
       @pipe_stdin = opts[:pipe_stdin]
       @run_before = opts[:run_before]
       @safe_value = opts[:safe] || 3
+      @limit_files = opts[:limit_files]
     end
 
     def guard_threads
@@ -22,6 +23,7 @@ module Secure
     def set_resource_limits
       Process::setrlimit(Process::RLIMIT_AS, @limit_memory) if @limit_memory
       Process::setrlimit(Process::RLIMIT_CPU, @limit_cpu, 2 + @limit_cpu) if @limit_cpu
+      Process::setrlimit(Process::RLIMIT_NOFILE, @limit_files, @limit_files) if @limit_files
     end
 
     def redirect_files

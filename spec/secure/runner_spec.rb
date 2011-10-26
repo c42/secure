@@ -112,6 +112,14 @@ module Secure
         response.error.should be_a(Secure::ChildKilledError)
       end
 
+      it "kills a process running trying to open a file" do
+        response = Runner.new(:safe => 0, :limit_files => 0).run do
+          File.read(__FILE__)
+        end
+        response.should_not be_success
+        response.error.should be_a(Errno::EMFILE)
+      end
+
       it "should not be able to open a file" do
         response = Runner.new.run do
           File.open("/etc/passwd")
