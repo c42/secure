@@ -66,7 +66,7 @@ Soon:
 
 Performance:
 ============
-Ruby monk is backed by an code evaluation server that uses secure gem in the backend. A single small (EC2) instance was able to consistently handle 150 code evaluation requests per minute, and we were able to horizontally scale when load went above this. YMMV
+RubyMonk is backed by an code evaluation server that uses secure gem in the backend. A single small (EC2) instance was able to consistently handle 150 code evaluation requests per minute, and we were able to horizontally scale when load went above this. YMMV
 
 Contributing:
 =============
