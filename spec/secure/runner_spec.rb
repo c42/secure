@@ -94,6 +94,7 @@ module Secure
 
       if RUBY_PLATFORM =~ /darwin/
         pending "should kill a process with too much memory (does not work on OSX)"
+        pending "kills a process trying to fork (does not work on OSX)"
       else
         it "should kill a process with too much memory on linux" do
           response = Runner.new(:limit_memory => 10 * 1024).run do
@@ -101,6 +102,17 @@ module Secure
           end
           response.should_not be_success
           response.error.should be_a(NoMemoryError)
+        end
+
+        it "kills a process trying to fork" do
+          response = Runner.new(:safe => 0, :limit_procs => 0).run do
+            fork do
+              exit
+            end
+            10
+          end
+          response.should_not be_success
+          response.error.should be_a(Errno::EMFILE)
         end
       end
 
@@ -119,6 +131,7 @@ module Secure
         response.should_not be_success
         response.error.should be_a(Errno::EMFILE)
       end
+
 
       it "should not be able to open a file" do
         response = Runner.new.run do

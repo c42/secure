@@ -8,12 +8,13 @@ module Secure
       @timeout = opts[:timeout]
       @limit_memory = opts[:limit_memory]
       @limit_cpu = opts[:limit_cpu]
+      @limit_files = opts[:limit_files]
+      @limit_procs = opts[:limit_procs]
       @pipe_stdout = opts[:pipe_stdout]
       @pipe_stderr = opts[:pipe_stderr]
       @pipe_stdin = opts[:pipe_stdin]
       @run_before = opts[:run_before]
       @safe_value = opts[:safe] || 3
-      @limit_files = opts[:limit_files]
     end
 
     def guard_threads
@@ -24,6 +25,7 @@ module Secure
       Process::setrlimit(Process::RLIMIT_AS, @limit_memory) if @limit_memory
       Process::setrlimit(Process::RLIMIT_CPU, @limit_cpu, 2 + @limit_cpu) if @limit_cpu
       Process::setrlimit(Process::RLIMIT_NOFILE, @limit_files, @limit_files) if @limit_files
+      Process::setrlimit(Process::RLIMIT_NPROC, @limit_procs, @limit_procs) if @limit_procs
     end
 
     def redirect_files

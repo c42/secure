@@ -39,6 +39,7 @@ Options:
 * :pipe_stdin, :pipe_stdout, :pipe_stderr => A File to pipe the stdin, out ond stderr to
 * :safe => An integer that represents the new safe mode (default 3)
 * :limit_files => Maximum file descriptor the block can open. If you want to say no files, set this to 0
+* :limit_procs => Maximum number of processes that the user can create. Set this to 0 if you want to ensure no one forks
 
 Errors:
 =======
@@ -57,7 +58,7 @@ How Does it work:
 
 Known Issues:
 =============
-* :limit_memory does not work on OSX (at least whatever version I use), but it does work on linux
+* :limit_memory and :limit_procs does not work on OSX (at least whatever version I use), but it does work on linux
 * :pipe_stdout is not tested because of some rspec weirdness
 * A block bound before $SAFE is set sees the old safe value. Refer to this for some clue about the reason why this happens: http://blog.sidu.in/2007/11/ruby-blocks-gotchas.html
 * Stdout cannot be piped to a StringIO. You need to open a unix PIPE. There are two reasons for this. The code runs in a child process, so you need to use and IPC mechanism, and a string IO is not recognized as a file at the C level
