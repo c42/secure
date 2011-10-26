@@ -38,6 +38,13 @@ Options:
 * :run_before => A block, or array of blocks that is run before your code is sandboxed. Be careful. Remember how lambdas are bound in ruby. Refer to this for more details: http://blog.sidu.in/2007/11/ruby-blocks-gotchas.html
 * :pipe_stdin, :pipe_stdout, :pipe_stderr => A File to pipe the stdin, out ond stderr to
 
+Errors:
+=======
+* Secure::TimeoutError => This is thrown if the :timeout limit is reached. The stack trace will be whatever line of code the app was running at the time
+* Secure::ChildKilledError => This is thrown if one of the kernel level checks cause the child to die. The stack trace for this exception will be junk
+* SecurityError => This is thrown if ruby tries to execute some code which is not allowed. The stack trace will help you figure out what was in violation
+* Any other Error will be thrown as if it had happened in the parent process. We do our best to preserve the stack trace.
+
 How Does it work:
 =================
 
@@ -60,3 +67,7 @@ Soon:
 Performance:
 ============
 Ruby monk is backed by an code evaluation server that uses secure gem in the backend. A single small (EC2) instance was able to consistently handle 150 code evaluation requests per minute, and we were able to horizontally scale when load went above this. YMMV
+
+Contributing:
+=============
+Feel free to file bugs. However, if it is a security issue, we appreciate it if you shoot me a mail at tejas@c42.in before you file a bug.
