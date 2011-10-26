@@ -12,12 +12,15 @@ gem 'secure'
 
 API Documentation:
 ==================
+```ruby
 Secure.ly do
   File.read("some file")
 end
+```
 
 You can pass options to tweak what security checks are put in place. If the option is not there, then the security check is not put in place by default
 
+```ruby
 Secure.ly
   :timeout => 0.15
   :limit_memory => 10000000
@@ -25,14 +28,15 @@ Secure.ly
   :pipe_stdout => File.open("foo", "w") do
   # Some secure operation here
 end
+```
 
 Options:
 ========
-:timeout => Guard thread that monitors the child process. If this elapses, this raises a Secure::TimeoutError
-:limit_memory => This is an absolute value of how much memory your block can take in bytes. Remember, absolute. I'll be getting relative support in soon
-:limit_cpu => This is the limit of how many cpu-seconds your process can use. MUST be an integer. This should be used as a fallback in case :timeout is not honored
-:run_before => A block, or array of blocks that is run before your code is sandboxed. Be careful. Remember how lambdas are bound in ruby. Refer to this for more details: http://blog.sidu.in/2007/11/ruby-blocks-gotchas.html
-:pipe_stdin, :pipe_stdout, :pipe_stderr => A File to pipe the stdin, out ond stderr to
+* :timeout => Guard thread that monitors the child process. If this elapses, this raises a Secure::TimeoutError
+* :limit_memory => This is an absolute value of how much memory your block can take in bytes. Remember, absolute. I'll be getting relative support in soon
+* :limit_cpu => This is the limit of how many cpu-seconds your process can use. MUST be an integer. This should be used as a fallback in case :timeout is not honored
+* :run_before => A block, or array of blocks that is run before your code is sandboxed. Be careful. Remember how lambdas are bound in ruby. Refer to this for more details: http://blog.sidu.in/2007/11/ruby-blocks-gotchas.html
+* :pipe_stdin, :pipe_stdout, :pipe_stderr => A File to pipe the stdin, out ond stderr to
 
 How Does it work:
 =================
@@ -51,7 +55,7 @@ Known Issues:
 
 Soon:
 =====
-* Getting rid of SAFE level 3, and moving everything into the kernel space. cgroups sounde hopeful here
+* Getting rid of SAFE level 3, and moving everything into the kernel space. cgroups sounds hopeful here. As does more rlimit stuff
 
 Performance:
 ============
