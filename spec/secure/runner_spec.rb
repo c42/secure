@@ -92,37 +92,33 @@ module Secure
         response.error.should be_a(Secure::TimeoutError)
       end
 
-      if RUBY_PLATFORM =~ /darwin/
-        pending "should kill a process with too much memory (does not work on OSX)"
-        pending "kills a process trying to fork (does not work on OSX)"
-      else
-
-        it "should kill a process with too much memory on linux" do
-          response = Runner.new(:limit_memory => 10 * 1024).run do
-            'a' * 10 * 1024
-          end
-          response.should_not be_success
-          response.error.should be_a(NoMemoryError)
-        end
-
-        it "kills a process trying to fork" do
-          response = Runner.new(:safe => 0, :limit_procs => 0).run do
-            fork do
-              exit
-            end
-            10
-          end
-          response.should_not be_success
-          response.error.should be_a(ChildKilledError)
-        end
-      end
-
       it "kills a process using too much cpu" do
         response = Runner.new(:limit_cpu => 1).run do
           while true; end
         end
         response.should_not be_success
         response.error.should be_a(Secure::ChildKilledError)
+      end
+
+      it "should kill a process with too much memory on linux" do
+        pending "does not work on OSX" if RUBY_PLATFORM =~ /darwin/
+        response = Runner.new(:limit_memory => 10 * 1024).run do
+          'a' * 10 * 1024
+        end
+        response.should_not be_success
+        response.error.should be_a(NoMemoryError)
+      end
+
+      it "kills a process trying to fork" do
+        pending "does not work on OSX" if RUBY_PLATFORM =~ /darwin/
+        response = Runner.new(:safe => 0, :limit_procs => 0).run do
+          fork do
+            exit
+          end
+          10
+        end
+        response.should_not be_success
+        response.error.should be_a(ChildKilledError)
       end
 
       it "kills a process running trying to open a file" do
@@ -204,14 +200,15 @@ module Secure
         read_file.read.should == "\"foobar\"\n"
       end
 
-      # This is pending because of some rspec wierdness that readline reads the first line of spec fil
-      pending "redirects standard input" do
-        write_file.puts "foobar"
-        write_file.close
-        response = Runner.new(:pipe_stdin => read_file).run do
-          readline
+      it "redirects standard input" do
+        pending "this does not work due to some rspec wierdness" do
+          write_file.puts "foobar"
+          write_file.close
+          response = Runner.new(:pipe_stdin => read_file).run do
+            readline
+          end
+          response.value.should == "foobar\n"
         end
-        response.value.should == "foobar\n"
       end
     end
   end
