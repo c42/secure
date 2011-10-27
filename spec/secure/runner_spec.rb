@@ -100,7 +100,8 @@ module Secure
         response.error.should be_a(Secure::ChildKilledError)
       end
 
-      except_on_OSX_it "should kill a process with too much memory on linux" do
+      it "should kill a process with too much memory on linux" do
+        except_on_OSX
         response = Runner.new(:limit_memory => 10 * 1024).run do
           'a' * 10 * 1024
         end
@@ -108,7 +109,8 @@ module Secure
         response.error.should be_a(NoMemoryError)
       end
 
-      except_on_OSX_it "kills a process trying to fork" do
+      it "kills a process trying to fork" do
+        except_on_OSX
         response = Runner.new(:safe => 0, :limit_procs => 0).run do
           fork do
             exit
