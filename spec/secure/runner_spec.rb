@@ -133,13 +133,18 @@ module Secure
         response.error.should be_a(Errno::EMFILE)
       end
 
-
       it "should not be able to open a file" do
         response = Runner.new.run do
           File.open("/etc/passwd")
         end
         response.should_not be_success
         response.error.should be_a(SecurityError)
+      end
+
+      it "should not kill safe code due to limits" do
+        response = Runner.new(:limit_files => 0, :limit_procs => 0).run { 10 }
+        response.should be_success
+        response.value.should == 10
       end
     end
 
