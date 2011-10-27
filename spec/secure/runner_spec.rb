@@ -89,7 +89,7 @@ module Secure
           while true; end
         end
         response.should_not be_success
-        response.error.should be_a(Secure::TimeoutError)
+        response.error.should be_a(TimeoutError)
       end
 
       it "kills a process using too much cpu" do
@@ -97,16 +97,16 @@ module Secure
           while true; end
         end
         response.should_not be_success
-        response.error.should be_a(Secure::ChildKilledError)
+        response.error.should be_a(ChildKilledError)
       end
 
-      it "should kill a process with too much memory on linux" do
+      it "should kill a process with too much memory" do
         except_on_OSX
-        response = Runner.new(:limit_memory => 10 * 1024).run do
-          'a' * 10 * 1024
+        response = Runner.new(:limit_memory => 1024 * 1024).run do
+          'a' * 1024 * 1024
         end
         response.should_not be_success
-        response.error.should be_a(NoMemoryError)
+        response.error.should be_a(ChildKilledError)
       end
 
       it "kills a process trying to fork" do
