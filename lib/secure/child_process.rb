@@ -23,9 +23,9 @@ module Secure
 
     def set_resource_limits
       Process::setrlimit(Process::RLIMIT_AS, @limit_memory) if @limit_memory
-      Process::setrlimit(Process::RLIMIT_CPU, @limit_cpu, 2 + @limit_cpu) if @limit_cpu
+      Process::setrlimit(Process::RLIMIT_CPU, @limit_cpu, 1 + @limit_cpu) if @limit_cpu
       Process::setrlimit(Process::RLIMIT_NOFILE, @limit_files, @limit_files) if @limit_files
-      #Process::setrlimit(Process::RLIMIT_NPROC, @limit_procs, @limit_procs) if @limit_procs
+      Process::setrlimit(Process::RLIMIT_NPROC, @limit_procs, @limit_procs) if @limit_procs
     end
 
     def redirect_files
@@ -43,15 +43,21 @@ module Secure
       end
     end
 
-    def safely_run_block
+    def secure_process
+      run_before_methods
       set_resource_limits
+      $SAFE = @safe_value
+    end
+
+    def safely_run_block
       redirect_files
       thread = Thread.start do
-        run_before_methods
-        $SAFE = @safe_value
+        sleep
+        secure_process
         yield
       end
       decorate_with_guard_threads(thread)
+      thread.wakeup
       Response.success(thread.value)
     rescue Exception => e
       Response.error(e)

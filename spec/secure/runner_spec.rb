@@ -113,7 +113,7 @@ module Secure
             10
           end
           response.should_not be_success
-          response.error.should be_a(ThreadError)
+          response.error.should be_a(ChildKilledError)
         end
       end
 
