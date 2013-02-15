@@ -3,6 +3,7 @@ module Secure
     def initialize(opts = {}, *args)
       @opts = opts
       @args = args
+      @timeout = opts[:timeout]
     end
 
     def run
@@ -15,9 +16,13 @@ module Secure
           exit
         end
       end
-
-      Process.wait(child)
+      Timeout.timeout @timeout do
+        Process.wait(child)
+      end
       ParentProcess.new(read_file, write_file).execute
+    rescue Timeout::Error
+      Process.kill(9, child)
+      raise
     ensure
       read_file.close unless read_file.closed?
       write_file.close unless write_file.closed?
