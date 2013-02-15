@@ -22,6 +22,7 @@ module Secure
       ParentProcess.new(read_file, write_file).execute
     rescue Timeout::Error
       Process.kill(9, child)
+      Process.wait(child)
       raise
     ensure
       read_file.close unless read_file.closed?
